@@ -138,3 +138,4 @@ for k, v in topic_dict.items():
             rows.append(row)
 
 pd.DataFrame(rows).to_csv("doc_assignment_23.csv", index=False)
+x = 1

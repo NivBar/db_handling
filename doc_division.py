@@ -42,3 +42,4 @@ for k, v in docs.items():
     new_docs["{}_B".format(k)]["bots"] = divisions[k]
     B_ind = col.insert_one(new_docs["{}_B".format(k)])
     print("{}_B".format(k), B_ind)
+
