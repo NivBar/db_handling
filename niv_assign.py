@@ -1,3 +1,4 @@
+import json
 import random
 import pandas as pd
 
@@ -91,11 +92,17 @@ def filter_lists(input_list):
     return filtered_lists
 
 
-def add_dummy(group):
+def add_dummies_and_bots(group, topic, bot_dict):
     if len(group) == 2:
         group.append("dummy")
+    bots = [bot for bot in bot_dict.keys() if topic in bot_dict[bot]]
+    group.extend(bots)
     return group
 
+
+# add bot users
+bot_dict = json.load(open("bot_docs.json"))
+bot_dict = {k.encode('utf-8'): [id.encode('utf-8') for id in v] for k, v in bot_dict.items()}
 
 topics = ["212", "210", "211", "218", "258", "274", "252", "235", "250", "255", "289", "281", "283", "233", "201",
           "203", "204", "209", "245", "244", "261", "246", "228", "226", "268", "249", "262", "272", "296", "291"]
@@ -107,15 +114,15 @@ for topic in topics:
 
     filtered_A = filter_lists(groups_A)
     chosen_A = random.sample(filtered_A, 2)
-    topic_dict[topic].append((add_dummy(chosen_A[0]), "A", "BERT"))
-    topic_dict[topic].append((add_dummy(chosen_A[1]), "A", "LambdaMART"))
+    topic_dict[topic].append((add_dummies_and_bots(chosen_A[0], topic, bot_dict), "A", "BERT"))
+    topic_dict[topic].append((add_dummies_and_bots(chosen_A[1], topic, bot_dict), "A", "LambdaMART"))
     groups_A.remove(chosen_A[0])
     groups_A.remove(chosen_A[1])
 
     filtered_B = filter_lists(groups_B)
     chosen_B = random.sample(filtered_B, 2)
-    topic_dict[topic].append((add_dummy(chosen_B[0]), "B", "BERT"))
-    topic_dict[topic].append((add_dummy(chosen_B[1]), "B", "LambdaMART"))
+    topic_dict[topic].append((add_dummies_and_bots(chosen_B[0],topic,bot_dict), "B", "BERT"))
+    topic_dict[topic].append((add_dummies_and_bots(chosen_B[1],topic,bot_dict), "B", "LambdaMART"))
     groups_B.remove(chosen_B[0])
     groups_B.remove(chosen_B[1])
 
@@ -136,6 +143,8 @@ for k, v in topic_dict.items():
                    "current_document": init_data["doc"].values[0]}
 
             rows.append(row)
+
+x = 1
 
 pd.DataFrame(rows).to_csv("doc_assignment_23.csv", index=False)
 x = 1
