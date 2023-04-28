@@ -135,7 +135,7 @@ for k, v in topic_dict.items():
         team, LLM, ranker = group
         for user in team:
             queries = eval(init_data["queries"].values[0])
-            row = {"query_id": k, "username": user, "variant": True if LLM == "A" else False, "ranker": ranker,
+            row = {"query_id": k, "username": user, "variant": "true" if LLM == "A" else "false", "ranker": ranker,
                    "query": queries[0], "query1": queries[0], "query2": queries[1], "query3": queries[2],
                    "description": init_data["description"].values[0], "position_q1": team.index(user) + 1,
                    "position_q2": team.index(user) + 1, "position_q3": team.index(user) + 1, "score1": 0, "score2": 0,
@@ -144,7 +144,4 @@ for k, v in topic_dict.items():
 
             rows.append(row)
 
-x = 1
-
 pd.DataFrame(rows).to_csv("doc_assignment_23.csv", index=False)
-x = 1
