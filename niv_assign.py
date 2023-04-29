@@ -129,6 +129,20 @@ for topic in topics:
 initials = pd.read_csv("initials.csv")
 rows = []
 
+
+def get_group(LLM, ranker):
+    if ranker == "LambdaMART":
+        if LLM == "A":
+            return "A"
+        else:
+            return "B"
+    else:
+        if LLM == "A":
+            return "C"
+        else:
+            return "D"
+
+
 for k, v in topic_dict.items():
     init_data = initials[initials["_id"].astype(str) == k]
     for group in v:
@@ -137,10 +151,8 @@ for k, v in topic_dict.items():
             queries = eval(init_data["queries"].values[0])
             row = {"query_id": k, "username": user, "variant": "true" if LLM == "A" else "false", "ranker": ranker,
                    "query": queries[0], "query1": queries[0], "query2": queries[1], "query3": queries[2],
-                   "description": init_data["description"].values[0], "position_q1": team.index(user) + 1,
-                   "position_q2": team.index(user) + 1, "position_q3": team.index(user) + 1, "score1": 0, "score2": 0,
-                   "score3": 0, "posted_document": init_data["doc"].values[0],
-                   "current_document": init_data["doc"].values[0]}
+                   "description": init_data["description"].values[0], "posted_document": init_data["doc"].values[0],
+                   "current_document": init_data["doc"].values[0], "group": get_group(LLM, ranker)}
 
             rows.append(row)
 
