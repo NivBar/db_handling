@@ -4,15 +4,14 @@ import pandas as pd
 
 random.seed(0)
 
-names = ["6A28XD", "GDRVGS", "GULFEI", "EL8Y8Y", "YVC01V", "PUORHX", "8DJE1B", "VJ0UD7", "SSKKP9", "HM0ZWN", "2F2TUQ",
-         "6B84RH", "MVNR0C", "X73JKK", "GLPDBE", "Y3QIA4", "E9Y47A", "7TLUKZ", "H4RL3I", "EMBFMM", "VNFR10", "K4DLWU",
-         "BX4AY8", "OC7JFW", "IMZNXD", "1A9150", "QTQ1K0", "L1SHMK", "O8SOUY", "BY689R", "B9ZFZ4", "TA56F9", "NFY421",
-         "YS2053", "Q4BP7I", "9AGGHI", "N2E8FH", "D43ZWG", "MUNR8D", "5MF60U", "AX9K6V", "IJLP1V", "5AJN77", "BGKI3Z",
-         "O0LP7L", "5W7YWF", "WQ9A6G", "TKGY9C", "SXUGGC", "RTHEG1", "YX265F", "JC7Y4H", "DQH01D", "G0AAMG", "SHACO3",
-         "SVUVOD", "8R3U9A", "O5TXVU", "V2YISI", "2MKNSN", "5ZJSGQ", "0R9HGX", "P1O4G7", "GM2CQT", "HCHOWW", "OL1RSO",
-         "XC9WRW", "GB33WW", "HSO0P3", "6J28UU", "1XCEZG", "NC8VCA", "ZPRHXI", "6SZYG7", "7TCG5B", "ZTQ93C", "VNLJSE",
-         "4YRS9W", "B8P2ZU", "RX0VB2", "K5A5DZ", "64O07E", "7SKA8Z", "2TQDP3", "8HFYSE", "QQKVXX", "ZMBGG0", "5GTZEY",
-         "RCROC4", "ZEL4KL"]
+names = ["6A28XD", "GDRVGS", "GULFEI", "YVC01V", "PUORHX", "8DJE1B", "SSKKP9", "HM0ZWN", "2F2TUQ", "6B84RH", "MVNR0C",
+         "X73JKK", "GLPDBE", "G9VD2C", "7TLUKZ", "H4RL3I", "EMBFMM", "K4DLWU", "BX4AY8", "OC7JFW", "IMZNXD", "1A9150",
+         "QTQ1K0", "L1SHMK", "O8SOUY", "BY689R", "B9ZFZ4", "TA56F9", "NFY421", "YS2053", "Q4BP7I", "9AGGHI", "N2E8FH",
+         "D43ZWG", "MUNR8D", "5MF60U", "AX9K6V", "IJLP1V", "5AJN77", "BGKI3Z", "O0LP7L", "5W7YWF", "TKGY9C", "SXUGGC",
+         "RTHEG1", "YX265F", "JC7Y4H", "DQH01D", "G0AAMG", "SHACO3", "SVUVOD", "8R3U9A", "O5TXVU", "V2YISI", "2MKNSN",
+         "5ZJSGQ", "0R9HGX", "P1O4G7", "GM2CQT", "HCHOWW", "OL1RSO", "XC9WRW", "GB33WW", "HSO0P3", "6J28UU", "1XCEZG",
+         "NC8VCA", "ZPRHXI", "6SZYG7", "7TCG5B", "ZTQ93C", "VNLJSE", "4YRS9W", "B8P2ZU", "K5A5DZ", "64O07E", "7SKA8Z",
+         "2TQDP3", "8HFYSE", "QQKVXX", "ZMBGG0", "5GTZEY", "RCROC4", "ZEL4KL"]
 
 max_group_size = 3
 random.shuffle(names)
@@ -92,7 +91,8 @@ def filter_lists(input_list):
     return filtered_lists
 
 
-def add_dummies_and_bots(group, topic, bot_dict):
+def add_dummies_and_bots(group_, topic, bot_dict):
+    group = group_[:]
     if len(group) == 2:
         group.append("dummy")
     bots = [bot for bot in bot_dict.keys() if topic in bot_dict[bot]]
@@ -110,6 +110,8 @@ topics = ["212", "210", "211", "218", "258", "274", "252", "235", "250", "255", 
 topic_dict = dict.fromkeys(topics)
 
 for topic in topics:
+    if topic == '228':
+        x=1
     topic_dict[topic] = []
 
     filtered_A = filter_lists(groups_A)
@@ -120,9 +122,14 @@ for topic in topics:
     groups_A.remove(chosen_A[1])
 
     filtered_B = filter_lists(groups_B)
-    chosen_B = random.sample(filtered_B, 2)
-    topic_dict[topic].append((add_dummies_and_bots(chosen_B[0],topic,bot_dict), "B", "BERT"))
-    topic_dict[topic].append((add_dummies_and_bots(chosen_B[1],topic,bot_dict), "B", "LambdaMART"))
+    remaining = []
+    users = set([item for sublist in chosen_A for item in sublist])
+    for group in filtered_B:
+        if set(group).isdisjoint(users):
+            remaining.append(group)
+    chosen_B = random.sample(remaining, 2)
+    topic_dict[topic].append((add_dummies_and_bots(chosen_B[0], topic, bot_dict), "B", "BERT"))
+    topic_dict[topic].append((add_dummies_and_bots(chosen_B[1], topic, bot_dict), "B", "LambdaMART"))
     groups_B.remove(chosen_B[0])
     groups_B.remove(chosen_B[1])
 
