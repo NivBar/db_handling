@@ -110,8 +110,6 @@ topics = ["212", "210", "211", "218", "258", "274", "252", "235", "250", "255", 
 topic_dict = dict.fromkeys(topics)
 
 for topic in topics:
-    if topic == '228':
-        x=1
     topic_dict[topic] = []
 
     filtered_A = filter_lists(groups_A)
